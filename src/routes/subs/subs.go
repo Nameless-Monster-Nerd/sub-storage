@@ -34,7 +34,7 @@ func Sub(c *gin.Context) {
 	fmt.Println("samir gupta ")
 	fmt.Println(subList)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	if  len(subList) != 0  {
 		common = subList
@@ -75,13 +75,15 @@ func Sub(c *gin.Context) {
 		psql.BatchUpload(subs)
 
 		subList, err = psql.BatchSearch(id, ssPtr, epPtr, true)
+		
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 		common = subList
 	}
 
 	outResult := []OutPut{}
+
 	for _, o := range common {
 		outResult = append(outResult, OutPut{
 			Lang: o.Lang,
