@@ -36,7 +36,7 @@ func Sub(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	if  len(subList) == 0  {
+	if  len(subList) != 0  {
 		common = subList
 
 	}
