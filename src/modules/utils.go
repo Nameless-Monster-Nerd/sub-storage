@@ -8,6 +8,8 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var Dsn string
@@ -15,9 +17,12 @@ var MinioClient *minio.Client
 var BucketName string
 var Env string
 var RabbitKey string
+var Db *gorm.DB
 
 func init() {
 	loadEnv()
+
+	
 
 	Env = os.Getenv("ENV")
 	RabbitKey = os.Getenv("RABBIT_KEY")
@@ -39,6 +44,12 @@ func init() {
 	})
 	if err != nil {
 		log.Fatalf("failed to initialize MinIO client: %v", err)
+	}
+
+
+	Db, err = gorm.Open(postgres.Open(Dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 }
 

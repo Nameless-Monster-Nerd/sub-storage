@@ -21,13 +21,10 @@ type Sub struct {
 
 // BatchUpload inserts subtitles in bulk, skipping any duplicate primary keys.
 func BatchUpload(subs []Sub) {
-	db, err := gorm.Open(postgres.Open(utils.Dsn), &gorm.Config{})
-	if err != nil {
-		fmt.Println("failed to connect to database")
-	}
+
 
 	// AutoMigrate ensures the table exists
-	if err := db.AutoMigrate(&Sub{}); err != nil {
+	if err := utils.Db.AutoMigrate(&Sub{}); err != nil {
 		fmt.Println(err)
 	}
 
@@ -36,7 +33,7 @@ func BatchUpload(subs []Sub) {
 	}
 
 	// Insert and skip duplicates (ON CONFLICT DO NOTHING)
-	result := db.Clauses(clause.OnConflict{
+	result := utils.Db.Clauses(clause.OnConflict{
 		DoNothing: true,
 	}).Create(&subs)
 
@@ -47,13 +44,9 @@ func BatchUpload(subs []Sub) {
 
 // BatchSearch looks up subtitles based on ID, season, episode, and flix flag.
 func BatchSearch(id string, ss *string, ep *string, flix bool) ([]Sub, error) {
-	db, err := gorm.Open(postgres.Open(utils.Dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
 
 	var subs []Sub
-	query := db.Model(&Sub{}).Where("id = ? AND flix = ?", id, flix)
+	query := utils.Db.Model(&Sub{}).Where("id = ? AND flix = ?", id, flix)
 
 	if ss != nil {
 		query = query.Where("ss = ?", *ss)
@@ -64,6 +57,6 @@ func BatchSearch(id string, ss *string, ep *string, flix bool) ([]Sub, error) {
 
 	if err := query.Find(&subs).Error; err != nil {
 		return nil, err
-	}
+	} 
 	return subs, nil
 }
