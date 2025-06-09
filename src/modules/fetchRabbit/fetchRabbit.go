@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	utils "github.com/nameless-Monster-Nerd/subtitle/src/modules"
 )
 
 // Define the response struct (same as yours)
@@ -58,7 +60,7 @@ func FetchRabbit(id string, ss *string, ep *string) *Result {
 
 	// Set custom headers
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	req.Header.Set("x-api-key", "")
+	req.Header.Set("x-api-key", utils.RabbitKey)
 	req.Header.Set("Accept", "*/*")
 	req.Header.Set("Connection", "keep-alive")
 

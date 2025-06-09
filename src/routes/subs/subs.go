@@ -31,16 +31,20 @@ func Sub(c *gin.Context) {
 	}
 	var common []psql.Sub
 	subList, err := psql.BatchSearch(id, ssPtr, epPtr, true)
+	fmt.Println("samir gupta ")
+	fmt.Println(subList)
 	if err != nil {
 		panic(err)
 	}
-	if subList != nil {
+	if  len(subList) == 0  {
 		common = subList
+
 	}
 
-	if subList == nil {
+	if len(subList) == 0 {
+		
 		result := fetchRabbit.FetchRabbit(id, ssPtr, epPtr)
-
+		fmt.Println(result)
 		var wg sync.WaitGroup
 		var mu sync.Mutex
 		subs := []psql.Sub{}

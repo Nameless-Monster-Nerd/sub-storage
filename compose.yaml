@@ -1,4 +1,3 @@
-
 services:
   server:
     image: luslucifer490587/sub-storage
@@ -6,4 +5,12 @@ services:
       context: .
       target: final
     ports:
-      - 8080:8080
+      - 80:8080
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/.env  # ⬅️ Mount .env into the container
+    restart: always
+    # command: ["echo", "'nigga chod '"]
+
+

@@ -1,9 +1,12 @@
 package psql
 
 import (
+	"log"
+
 	utils "github.com/nameless-Monster-Nerd/subtitle/src/modules"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Sub struct {
@@ -12,19 +15,19 @@ type Sub struct {
 	EP     *string `gorm:"column:ep"`
 	Key    string  `gorm:"primaryKey;column:key"`
 	Bucket string  `gorm:"column:bucket"`
-	Lang 	string `gorm:"column:lang"`
+	Lang   string  `gorm:"column:lang"`
 	Flix   bool    `gorm:"column:flix"`
-	
 }
 
+// BatchUpload inserts subtitles in bulk, skipping any duplicate primary keys.
 func BatchUpload(subs []Sub) {
 	db, err := gorm.Open(postgres.Open(utils.Dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		panic("failed to connect to database")
 	}
 
-	err = db.AutoMigrate(&Sub{})
-	if err != nil {
+	// AutoMigrate ensures the table exists
+	if err := db.AutoMigrate(&Sub{}); err != nil {
 		panic(err)
 	}
 
@@ -32,13 +35,17 @@ func BatchUpload(subs []Sub) {
 		return
 	}
 
-	// Bulk insert
-	result := db.Create(&subs)
+	// Insert and skip duplicates (ON CONFLICT DO NOTHING)
+	result := db.Clauses(clause.OnConflict{
+		DoNothing: true,
+	}).Create(&subs)
+
 	if result.Error != nil {
-		panic(result.Error)
+		log.Printf("BatchUpload error: %v\n", result.Error)
 	}
 }
 
+// BatchSearch looks up subtitles based on ID, season, episode, and flix flag.
 func BatchSearch(id string, ss *string, ep *string, flix bool) ([]Sub, error) {
 	db, err := gorm.Open(postgres.Open(utils.Dsn), &gorm.Config{})
 	if err != nil {
@@ -58,13 +65,5 @@ func BatchSearch(id string, ss *string, ep *string, flix bool) ([]Sub, error) {
 	if err := query.Find(&subs).Error; err != nil {
 		return nil, err
 	}
-
-	if len(subs) == 0 {
-		return nil, nil
-	}
-
 	return subs, nil
 }
-
-
-
