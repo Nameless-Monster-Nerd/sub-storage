@@ -2,7 +2,7 @@ package psql
 
 import (
 	"log"
-
+	"fmt"
 	utils "github.com/nameless-Monster-Nerd/subtitle/src/modules"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -23,12 +23,12 @@ type Sub struct {
 func BatchUpload(subs []Sub) {
 	db, err := gorm.Open(postgres.Open(utils.Dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect to database")
+		fmt.Println("failed to connect to database")
 	}
 
 	// AutoMigrate ensures the table exists
 	if err := db.AutoMigrate(&Sub{}); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	if len(subs) == 0 {
