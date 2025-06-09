@@ -4,8 +4,7 @@ import (
 	"log"
 	"fmt"
 	utils "github.com/nameless-Monster-Nerd/subtitle/src/modules"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+
 	"gorm.io/gorm/clause"
 )
 
