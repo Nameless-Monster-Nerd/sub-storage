@@ -21,5 +21,5 @@ jobs:
       # Step 3: Install dependencies (optional example command)
       - name: Install dependencies
         run: |
-          docker compose build --no-cache 
+          docker compose -f docker-compose.build.yml build --no-cache 
           docker compose push 
